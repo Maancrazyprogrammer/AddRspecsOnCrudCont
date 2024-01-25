@@ -23,3 +23,4 @@ Things you may want to cover:
 
 * ...
 # loginsignup_api_with_jwt
+# jwt_login_signup_api_auth
