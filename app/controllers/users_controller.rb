@@ -5,8 +5,10 @@ class UsersController < ApplicationController
   def index
   end
   def create 
+     
       user = User.create!(user_params)
       @token = encode_token(user_id: user.id)
+      user.update(token:@token)
       render json: {
           user: UserSerializer.new(user), 
           token: @token
@@ -14,7 +16,9 @@ class UsersController < ApplicationController
   end
 
   def me 
+
       render json: current_user, status: :ok
+
   end
 
   private
