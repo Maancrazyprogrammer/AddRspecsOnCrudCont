@@ -1,6 +1,6 @@
 class BookmarksController < ApplicationController
   before_action :set_bookmark, only: %i[ show update destroy ]
-
+  before_action :authenticate_user!, only: %i[create update destroy show index]
   # GET /bookmarks
   def index
     @bookmarks = Bookmark.all
@@ -16,7 +16,6 @@ class BookmarksController < ApplicationController
   # POST /bookmarks
   def create
     @bookmark = Bookmark.new(bookmark_params)
-
     if @bookmark.save
       render json: @bookmark, status: :created, location: @bookmark
     else

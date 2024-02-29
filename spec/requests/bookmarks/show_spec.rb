@@ -4,6 +4,13 @@ require 'rails_helper'
 
 
   describe "GET /show" do
+    let(:user) { create(:user) }
+
+    before do
+      # Sign in the user before making requests
+      sign_in user
+    end
+
     it "returns a successful response with the bookmark details in JSON format" do
       bookmark = create(:bookmark, title: "Bookmark 1", url: "https://example.com/1")
 

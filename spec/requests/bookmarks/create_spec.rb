@@ -1,11 +1,14 @@
 require 'rails_helper'
 
-describe 'POST /bookmarks' do
-  # 'scenario' is similar to 'it', use which you see fit
+describe 'POST /bookmarks', type: :request do
+  let(:user) { create(:user) }
+
+  before do
+    # Sign in the user before making requests
+    sign_in user
+  end
 
   scenario 'valid bookmark attributes' do
-    # send a POST request to /bookmarks, with these parameters
-    # The controller will treat them as JSON
     post '/bookmarks', params: {
       bookmark: {
         url: 'https://rubyyagi.com',
@@ -13,19 +16,12 @@ describe 'POST /bookmarks' do
       }
     }
 
-    # response should have HTTP Status 201 Created
     expect(response.status).to eq(201)
 
     json = JSON.parse(response.body).deep_symbolize_keys
-
-    # check the value of the returned response hash
     expect(json[:url]).to eq('https://rubyyagi.com')
     expect(json[:title]).to eq('RubyYagi blog')
-
-    # 1 new bookmark record is created
     expect(Bookmark.count).to eq(1)
-
-    # Optionally, you can check the latest record data
     expect(Bookmark.last.title).to eq('RubyYagi blog')
   end
 
@@ -37,13 +33,28 @@ describe 'POST /bookmarks' do
       }
     }
 
-    # response should have HTTP Status 201 Created
     expect(response.status).to eq(422)
 
     json = JSON.parse(response.body).deep_symbolize_keys
     expect(json[:url]).to eq(["can't be blank"])
+    expect(Bookmark.count).to eq(0)
+  end
+  scenario 'user is not signed in' do
+    sign_out :user  # Assuming :user is the Devise scope
+    post '/bookmarks', params: {
+      bookmark: {
+        url: 'https://rubyyagi.com',
+        title: 'RubyYagi blog'
+      }
+    }
 
-    # no new bookmark record is created
+    expect(response.status).to eq(302)
+
+    # Follow the redirect to the sign-in page if needed
+    follow_redirect! if response.status == 302
+
+    # Optionally, check the final status after redirection
+    # expect(response.status).to eq(401)
     expect(Bookmark.count).to eq(0)
   end
 end

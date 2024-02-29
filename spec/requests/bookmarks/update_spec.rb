@@ -4,6 +4,13 @@ require 'rails_helper'
 describe 'PUT /bookmarks' do
   # this will create a 'bookmark' method, which return the created bookmark object,
   # before each scenario is ran
+  let(:user) { create(:user) }
+
+  before do
+    # Sign in the user before making requests
+    sign_in user
+  end
+
   let!(:bookmark) { Bookmark.create(url: 'https://rubyyagi.com', title: 'Ruby Yagi') }
 
   scenario 'valid bookmark attributes' do
