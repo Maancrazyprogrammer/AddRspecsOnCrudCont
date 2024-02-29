@@ -55,4 +55,26 @@ describe 'PUT /bookmarks' do
     expect(bookmark.reload.title).to eq('Ruby Yagi')
     expect(bookmark.reload.url).to eq('https://rubyyagi.com')
   end
+  scenario 'user is not signed in, cannot update the bookmark' do
+    # No sign_in action for this scenario
+     sign_out user
+    put "/bookmarks/#{bookmark.id}", params: {
+      bookmark: {
+        url: 'https://fluffy.es',
+        title: 'Fluffy'
+      }
+    }
+
+    expect(response.status).to eq(302)
+
+    # Follow the redirect to the sign-in page if needed
+    follow_redirect! if response.status == 302
+
+    # Optionally, check the final status after redirection
+    # expect(response.status).to eq(401)
+
+    # The bookmark should not be updated
+    expect(bookmark.reload.title).to eq('Ruby Yagi')
+    expect(bookmark.reload.url).to eq('https://rubyyagi.com')
+  end
 end

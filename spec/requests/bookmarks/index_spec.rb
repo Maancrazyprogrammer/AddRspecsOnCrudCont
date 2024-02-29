@@ -34,4 +34,6 @@ require 'rails_helper'
 
       expect(assigns(:bookmarks).to_a).to match_array([bookmark1, bookmark2])
     end
+
+
   end
