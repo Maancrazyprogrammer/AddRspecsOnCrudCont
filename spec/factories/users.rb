@@ -4,6 +4,6 @@ FactoryBot.define do
     bio { "hello world" }
     email {"nouman@gmail.com"}
     password {"nouman123"}
-    role { Faker::Base.rand_inclusion(["admin", "student"]) }
+    role { %w[admin student].sample }
   end
 end

@@ -64,7 +64,12 @@ RSpec.configure do |config|
   RSpec.configure do |config|
     # ...
     config.include Devise::Test::IntegrationHelpers, type: :request
+    config.include Devise::Test::ControllerHelpers, type: :controller
+    config.render_views = true
     # ...
   end
+
+    # ... other configurations
+
 
 end

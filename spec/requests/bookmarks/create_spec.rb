@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'cancan/matchers' # Include CanCanCan matchers
 
 describe 'POST /bookmarks', type: :request do
   let(:user) { create(:user) }

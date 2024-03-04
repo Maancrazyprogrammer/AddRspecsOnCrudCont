@@ -70,8 +70,7 @@ describe 'PUT /bookmarks' do
     # Follow the redirect to the sign-in page if needed
     follow_redirect! if response.status == 302
 
-    # Optionally, check the final status after redirection
-    # expect(response.status).to eq(401)
+
 
     # The bookmark should not be updated
     expect(bookmark.reload.title).to eq('Ruby Yagi')

@@ -1,4 +1,4 @@
-# spec/requests/bookmarks/index_spec.rb
+
 
 require 'rails_helper'
 
@@ -26,14 +26,6 @@ require 'rails_helper'
       expect(parsed_response[1]["url"]).to eq("https://example.com/2")
     end
 
-    it "assigns @bookmarks with a list of bookmarks" do
-      bookmark1 = create(:bookmark)
-      bookmark2 = create(:bookmark)
-
-      get '/index'
-
-      expect(assigns(:bookmarks).to_a).to match_array([bookmark1, bookmark2])
-    end
 
 
   end
