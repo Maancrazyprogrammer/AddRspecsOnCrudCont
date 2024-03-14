@@ -1,12 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Bookmark, type: :model do
+
   context "when creating a bookmark" do
     let(:bookmark) {build :bookmark}
     it "should be a valid" do
       expect(bookmark.valid?).to eq(true)
     end
   end
+
   scenario 'invalid bookmark attributes' do
     post '/bookmarks', params: {
       bookmark: {

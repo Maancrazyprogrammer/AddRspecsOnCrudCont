@@ -86,7 +86,7 @@ GEM
     bootsnap (1.17.1)
       msgpack (~> 1.2)
     builder (3.2.4)
-    cancan (1.6.10)
+    cancancan (3.5.0)
     case_transform (0.2)
       activesupport
     concurrent-ruby (1.2.3)
@@ -259,7 +259,7 @@ DEPENDENCIES
   active_model_serializers
   bcrypt (~> 3.1, >= 3.1.12)
   bootsnap
-  cancan
+  cancancan
   debug
   devise
   factory_bot_rails

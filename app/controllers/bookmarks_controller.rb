@@ -1,12 +1,15 @@
 class BookmarksController < ApplicationController
   before_action :set_bookmark, only: %i[ show update destroy ]
   before_action :authenticate_user!, only: %i[create update destroy show index]
+  # before_action :authenticate_user!
+  # load_and_authorize_resource
 
 
 
   # GET /bookmarks
   def index
 
+    # authorize! :read, Bookmark
 
     @bookmarks = Bookmark.all
 
@@ -16,6 +19,7 @@ class BookmarksController < ApplicationController
   # GET /bookmarks/1
   def show
 
+    # authorize! :read, Bookmark
 
     render json: @bookmark
   end
@@ -24,6 +28,8 @@ class BookmarksController < ApplicationController
   def create
 
     @bookmark = Bookmark.new(bookmark_params)
+    authorize! :create, Bookmark
+
     if @bookmark.save
       render json: @bookmark, status: :created, location: @bookmark
     else
@@ -34,6 +40,7 @@ class BookmarksController < ApplicationController
   # PATCH/PUT /bookmarks/1
   def update
 
+    authorize! :update, Bookmark
 
     if @bookmark.update(bookmark_params)
       render json: @bookmark
@@ -44,8 +51,16 @@ class BookmarksController < ApplicationController
 
   # DELETE /bookmarks/1
   def destroy
+    authorize! :destroy, Bookmark
 
-    @bookmark.destroy!
+  #   @bookmark = Bookmark.find(params[:id])
+  # # authorize! :destroy, @bookmark
+  # if current_user.admin?
+    @bookmark.destroy
+  #   head :no_content
+  # else
+  #   head :forbidden
+  # end
   end
 
   private

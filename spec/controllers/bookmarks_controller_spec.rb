@@ -1,17 +1,26 @@
+
 require 'rails_helper'
 
 RSpec.describe BookmarksController, type: :controller do
+
   let(:user) { create(:user) }
+  let(:bookmark) { create(:bookmark) }
+  let(:admin_user) { create(:user, role: 'admin', email: 'admin@example.com') }
+  let(:student_user) { create(:user, role: 'student', email: 'student@example.com') }
+
+  # let(:user) { create(:user, role: 'admin') }
 
   before do
     sign_in user
   end
 
   describe 'GET /index' do
+    before { sign_in admin_user }
     it 'returns a success response' do
       get :index
       expect(response).to have_http_status(:success)
     end
+
     it 'redirects to sign-in page when user is not signed in' do
       sign_out user
 
@@ -27,8 +36,18 @@ RSpec.describe BookmarksController, type: :controller do
       expect(response.body).to be_empty
     end
   end
+  describe 'GET /index' do
+    before { sign_in student_user }
+    it 'returns a success response' do
+      get :index
+      expect(response).to have_http_status(:success)
+    end
+
+
+  end
 
   describe 'GET /show' do
+    before { sign_in admin_user }
     let(:bookmark) { create(:bookmark) }
 
     it 'returns a success response' do
@@ -58,7 +77,21 @@ RSpec.describe BookmarksController, type: :controller do
     end
   end
 
+  describe 'GET /show' do
+    before { sign_in student_user }
+    let(:bookmark) { create(:bookmark) }
+
+    it 'returns a success response' do
+      get :show, params: { id: bookmark.to_param }
+      expect(response).to have_http_status(:success)
+      parsed_response = JSON.parse(response.body)
+
+      expect(parsed_response["title"]).to eq("MyString")
+      expect(parsed_response["url"]).to eq("MyString")
+    end
+  end
   describe 'POST /bookmarks' do
+    before { sign_in admin_user }
     let(:valid_attributes) {
       { bookmark: attributes_for(:bookmark) }
     }
@@ -96,9 +129,24 @@ RSpec.describe BookmarksController, type: :controller do
         expect(Bookmark.count).to eq(0)
       end
     end
+    context 'when user is not admin' do
+            before { sign_in student_user }
+
+            it 'does not create a new Bookmark' do
+              expect {
+                post :create, params: { bookmark: attributes_for(:bookmark) }
+              }.to raise_error(CanCan::AccessDenied)
+
+              # expect(response.status).to eq(302)
+
+
+        expect(Bookmark.count).to eq(0)
+            end
+          end
   end
 
   describe 'PATCH /update' do
+    before { sign_in admin_user }
     let(:bookmark) { create(:bookmark) }
     let(:new_attributes) { { title: 'Updated Title' } }
 
@@ -109,6 +157,7 @@ RSpec.describe BookmarksController, type: :controller do
         bookmark.reload
         expect(bookmark.title).to eq('Updated Title')
       end
+
     end
 
     context 'with invalid parameters' do
@@ -127,9 +176,20 @@ RSpec.describe BookmarksController, type: :controller do
 
       end
     end
+    context 'when user is not admin' do
+      before { sign_in student_user }
+
+      it 'does not update a Bookmark' do
+        expect {
+          patch :update, params: { id: bookmark.to_param, bookmark: new_attributes }
+        }.to raise_error(CanCan::AccessDenied)
+      end
+    end
+
   end
 
   describe 'DELETE /destroy' do
+    before { sign_in admin_user }
     let!(:bookmark) { create(:bookmark) }
 
     it 'destroys the requested bookmark' do
@@ -149,6 +209,15 @@ RSpec.describe BookmarksController, type: :controller do
 
       expect(response.status).to eq(302)
       expect(Bookmark.exists?(bookmark.id)).to be_truthy  # Bookmark should not be deleted
+    end
+    context 'when user is not admin' do
+      before { sign_in student_user }
+
+      it 'does not destroy a Bookmark' do
+        expect {
+          delete :destroy, params: { id: bookmark.to_param }
+        }.to raise_error(CanCan::AccessDenied)
+      end
     end
 
   end
